@@ -1,0 +1,32 @@
+# Build output
+target/
+*.class
+*.jar
+*.war
+*.zip
+*.tar
+*.tar.gz
+
+# Maven
+.mvn/apache-maven-*/
+.mvn/timing.properties
+
+# Azure Storage Emulator
+azurite-data/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test files
+testfile.txt
