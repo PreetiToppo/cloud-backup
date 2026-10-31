@@ -1,5 +1,6 @@
 package com.cloudbackup.backup.service;
 
+import com.azure.core.exception.ResourceExistsException;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.cloudbackup.backup.model.BackupEntity;
@@ -18,7 +19,6 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
-import java.util.Locale;
 
 @Service
 public class BackupServiceImpl implements BackupService {
@@ -65,7 +65,11 @@ public class BackupServiceImpl implements BackupService {
             // Upload to Azure Blob
             String blobName = fileHash + "-" + originalFileName;
             BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(containerNameValue);
-            containerClient.getBlobClient(blobName).uploadFromFile(filePath.toString());
+            try {
+                containerClient.getBlobClient(blobName).uploadFromFile(filePath.toString(), true);
+            } catch (ResourceExistsException e) {
+                logger.warn("Blob already exists in storage, skipping upload for blobName: {}", blobName);
+            }
 
             // Save to database
             BackupEntity backupEntity = new BackupEntity();
